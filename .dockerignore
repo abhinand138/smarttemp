@@ -1,0 +1,17 @@
+# Root .dockerignore
+**/.git/
+**/.gitignore
+**/.vscode/
+**/.idea/
+**/node_modules/
+**/dist/
+**/venv/
+**/.venv/
+**/__pycache__/
+**/*.pyc
+**/*.pyo
+**/*.pyd
+**/*.log
+**/.env
+**/.env.local
+esp32/

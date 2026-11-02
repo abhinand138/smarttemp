@@ -1,0 +1,96 @@
+services:
+  # ========================================================
+  # 1. PostgreSQL Database Service
+  # ========================================================
+  db:
+    image: postgres:16-alpine
+    container_name: smarttemp-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
+      POSTGRES_DB: ${DB_NAME:-smarttemp_db}
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER:-postgres} -d $${POSTGRES_DB:-smarttemp_db}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - smarttemp-net
+
+  # ========================================================
+  # 2. Flask REST API Backend Service
+  # ========================================================
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: smarttemp-backend
+    restart: unless-stopped
+    environment:
+      PORT: 5000
+      HOST: 0.0.0.0
+      FLASK_DEBUG: ${FLASK_DEBUG:-False}
+      SECRET_KEY: ${SECRET_KEY:-smarttemp-prod-secret-key-change-me}
+      DB_USER: ${DB_USER:-postgres}
+      DB_PASSWORD: ${DB_PASSWORD:-postgres}
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: ${DB_NAME:-smarttemp_db}
+      DATABASE_URL: postgresql+psycopg://${DB_USER:-postgres}:${DB_PASSWORD:-postgres}@db:5432/${DB_NAME:-smarttemp_db}
+      CORS_ORIGINS: ${CORS_ORIGINS:-*}
+      ALERT_TEMP_HIGH: ${ALERT_TEMP_HIGH:-35.0}
+      ALERT_TEMP_LOW: ${ALERT_TEMP_LOW:-15.0}
+      ALERT_HUMIDITY_HIGH: ${ALERT_HUMIDITY_HIGH:-80.0}
+      ALERT_HUMIDITY_LOW: ${ALERT_HUMIDITY_LOW:-30.0}
+      SEED_DEMO_DATA: ${SEED_DEMO_DATA:-false}
+    ports:
+      # Expose port 5000 on host so ESP32 and API clients can post readings
+      - "${BACKEND_PORT:-5000}:5000"
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://127.0.0.1:5000/api/status || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+    networks:
+      - smarttemp-net
+
+  # ========================================================
+  # 3. React Web Dashboard (Nginx Reverse Proxy)
+  # ========================================================
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_API_BASE_URL: ""
+    container_name: smarttemp-frontend
+    restart: unless-stopped
+    ports:
+      # Dashboard accessible at http://localhost:5173
+      - "${FRONTEND_PORT:-5173}:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - smarttemp-net
+
+# ==========================================================
+# Named Networks & Volumes
+# ==========================================================
+networks:
+  smarttemp-net:
+    driver: bridge
+
+volumes:
+  postgres_data:
+    driver: local

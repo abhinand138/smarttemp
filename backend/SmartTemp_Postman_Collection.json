@@ -1,0 +1,157 @@
+{
+  "info": {
+    "name": "SmartTemp IoT API",
+    "description": "Postman Collection for testing SmartTemp IoT environmental monitoring endpoints.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1. Root Health Check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://127.0.0.1:5000/",
+          "protocol": "http",
+          "host": ["127", "0", "0", "1"],
+          "port": "5000",
+          "path": [""]
+        }
+      }
+    },
+    {
+      "name": "2. API System & Database Status",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://127.0.0.1:5000/api/status",
+          "protocol": "http",
+          "host": ["127", "0", "0", "1"],
+          "port": "5000",
+          "path": ["api", "status"]
+        }
+      }
+    },
+    {
+      "name": "3. Record Sensor Reading (Normal)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"device_id\": \"esp32_dht11_primary\",\n  \"temperature\": 24.8,\n  \"humidity\": 58.5\n}"
+        },
+        "url": {
+          "raw": "http://127.0.0.1:5000/api/readings",
+          "protocol": "http",
+          "host": ["127", "0", "0", "1"],
+          "port": "5000",
+          "path": ["api", "readings"]
+        }
+      }
+    },
+    {
+      "name": "4. Record Sensor Reading (High Temp Alert)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"device_id\": \"esp32_dht11_primary\",\n  \"temperature\": 37.5,\n  \"humidity\": 48.0\n}"
+        },
+        "url": {
+          "raw": "http://127.0.0.1:5000/api/readings",
+          "protocol": "http",
+          "host": ["127", "0", "0", "1"],
+          "port": "5000",
+          "path": ["api", "readings"]
+        }
+      }
+    },
+    {
+      "name": "5. Get Latest Sensor Reading",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://127.0.0.1:5000/api/readings/latest",
+          "protocol": "http",
+          "host": ["127", "0", "0", "1"],
+          "port": "5000",
+          "path": ["api", "readings", "latest"]
+        }
+      }
+    },
+    {
+      "name": "6. Get Historical Readings (Paginated)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://127.0.0.1:5000/api/readings?page=1&limit=20",
+          "protocol": "http",
+          "host": ["127", "0", "0", "1"],
+          "port": "5000",
+          "path": ["api", "readings"],
+          "query": [
+            { "key": "page", "value": "1" },
+            { "key": "limit", "value": "20" }
+          ]
+        }
+      }
+    },
+    {
+      "name": "7. Get Today Readings (Chronological)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://127.0.0.1:5000/api/readings/today",
+          "protocol": "http",
+          "host": ["127", "0", "0", "1"],
+          "port": "5000",
+          "path": ["api", "readings", "today"]
+        }
+      }
+    },
+    {
+      "name": "8. Get Today Statistics (Min/Max/Avg)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://127.0.0.1:5000/api/stats",
+          "protocol": "http",
+          "host": ["127", "0", "0", "1"],
+          "port": "5000",
+          "path": ["api", "stats"]
+        }
+      }
+    },
+    {
+      "name": "9. Get Recent Alerts",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://127.0.0.1:5000/api/alerts",
+          "protocol": "http",
+          "host": ["127", "0", "0", "1"],
+          "port": "5000",
+          "path": ["api", "alerts"]
+        }
+      }
+    }
+  ]
+}

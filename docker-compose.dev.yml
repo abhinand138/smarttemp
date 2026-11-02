@@ -1,0 +1,27 @@
+# ========================================================
+# Development Override Compose File
+# Usage: docker compose -f docker-compose.yml -f docker-compose.dev.yml up
+# Enables live source code hot-reloading for Backend & Frontend
+# ========================================================
+services:
+  backend:
+    environment:
+      FLASK_DEBUG: "True"
+    volumes:
+      - ./backend:/app
+      - /app/__pycache__
+    entrypoint: []
+    command: ["python", "app.py"]
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      - VITE_API_BASE_URL=http://localhost:5000
+    command: ["npm", "run", "dev", "--", "--host", "0.0.0.0"]

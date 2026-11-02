@@ -1,0 +1,49 @@
+/**
+ * SmartTemp - ESP32 Configuration Template
+ * 
+ * Instructions:
+ * 1. Copy this file and rename the copy to "config.h" in the same folder.
+ * 2. Fill in your Wi-Fi SSID and Password below.
+ * 3. Replace SERVER_URL with your computer's local Wi-Fi IP (e.g. http://192.168.1.2:5000/api/readings).
+ * 4. "config.h" is git-ignored so your credentials will never be committed to Git.
+ */
+
+#ifndef SMARTTEMP_CONFIG_H
+#define SMARTTEMP_CONFIG_H
+
+// ==========================================
+// 1. Wi-Fi Network Credentials
+// ==========================================
+#define WIFI_SSID "YOUR_WIFI_SSID"
+#define WIFI_PASSWORD "YOUR_WIFI_PASSWORD"
+
+// ==========================================
+// 2. Backend Server Endpoint
+// ==========================================
+// Note: Do NOT use "localhost" or "127.0.0.1". 
+// You must use your computer's local IPv4 address on your Wi-Fi router.
+// To find it on Windows: Open PowerShell and run "ipconfig" (look for IPv4 Address).
+#define SERVER_URL "http://192.168.1.2:5000/api/readings"
+
+// ==========================================
+// 3. Hardware & Sensor Settings
+// ==========================================
+// GPIO pin connected to the DHT11 Data pin
+#define DHT_PIN 4
+
+// Sensor model: DHT11 (or DHT22 if using DHT22)
+#define DHT_TYPE DHT11
+
+// Unique device identifier stored in database
+#define DEVICE_ID "esp32_dht11_primary"
+
+// Built-in status LED pin (GPIO 2 on standard 38-pin ESP32 boards)
+#define STATUS_LED_PIN 2
+
+// ==========================================
+// 4. Transmission Interval
+// ==========================================
+// Delay between readings in milliseconds (30,000 ms = 30 seconds)
+#define SEND_INTERVAL_MS 30000
+
+#endif // SMARTTEMP_CONFIG_H

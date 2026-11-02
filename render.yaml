@@ -1,0 +1,46 @@
+databases:
+  # ==========================================
+  # 1. Managed PostgreSQL Database (Free Tier)
+  # ==========================================
+  - name: smarttemp-db
+    databaseName: smarttemp_db
+    user: postgres
+    plan: free
+
+services:
+  # ==========================================
+  # 2. Flask REST API Backend Service
+  # ==========================================
+  - type: web
+    name: smarttemp-backend
+    runtime: python
+    plan: free
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn "app:create_app()"
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: smarttemp-db
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: CORS_ORIGINS
+        value: "*"
+      - key: PORT
+        value: 10000
+
+  # ==========================================
+  # 3. React Web Dashboard (Static Site)
+  # ==========================================
+  - type: web
+    name: smarttemp-frontend
+    runtime: static
+    plan: free
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
