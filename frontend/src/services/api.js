@@ -1,7 +1,11 @@
 import axios from 'axios';
 
 // Get base URL from environment or fallback to relative URL (leveraging Vite dev proxy)
-const BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
+let rawBase = import.meta.env.VITE_API_BASE_URL || '';
+if (rawBase && !rawBase.startsWith('http://') && !rawBase.startsWith('https://')) {
+  rawBase = `https://${rawBase}`;
+}
+const BASE_URL = rawBase ? rawBase.replace(/\/+$/, '') : '';
 
 export const api = axios.create({
   baseURL: BASE_URL,
