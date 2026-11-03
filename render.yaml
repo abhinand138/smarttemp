@@ -4,7 +4,7 @@ databases:
   # ==========================================
   - name: smarttemp-db
     databaseName: smarttemp_db
-    user: postgres
+    user: smarttemp_user
     plan: free
 
 services:
